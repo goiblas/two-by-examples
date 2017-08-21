@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body style="background: #efefef;">
+<script src="./two.js"></script>
+<script>
+    var two = new Two({
+        fullscreen: true,
+        autostart: true
+    }).appendTo(document.body);
+
+    var _bubbles = [];
+    var scene = two.makeGroup();
+    scene.id = 'scene';
+
+    addBubble();
+    addBubble();
+    addBubble();
+    addBubble();
+
+    two.bind('update', function(framecount){
+        for( var i = 0; i < _bubbles.length; i++){
+            var bb = _bubbles[i];
+            bb.translation.addSelf(bb.velocity);
+        }
+
+        if( framecount % 20  === 0) {
+            checkBubbles();
+        }
+
+    });
+
+    function checkBubbles(){
+        for( var i = 0; i < _bubbles.length; i++){
+            var bb = _bubbles[i];
+            
+
+            if( bb.translation.y > two.height || bb.translation.y < 0 ){
+                bb.velocity.y *= -1;
+            }
+            if( bb.translation.x > two.width || bb.translation.x < 0 ){
+                bb.velocity.x *= -1;
+            }
+
+            for( var j = i + 1; j < _bubbles.length; j++){
+                var bnext = _bubbles[j];
+
+                if( checkColision(bb, bnext) ){
+                    bb.velocity.negate();
+                    bnext.velocity.negate();
+                }
+            }
+        }
+    }
+
+    function checkColision(obj1, obj2){
+        
+        var position1 = obj1.translation;
+        var position2 = obj2.translation;
+        var distance = Two.Utils.distanceBetween(position1, position2);
+        return distance < 60;
+
+    }
+
+    function addBubble(position){
+        var bubble = two.makeEllipse(0, 0, 30, 30);
+
+        bubble.noStroke().fill = '#1abc9c';
+
+        bubble.position = position || new Two.Vector(Math.floor(Math.random() * 900), Math.floor(Math.random() * 700));
+        bubble.translation.copy(bubble.position);
+
+        bubble.velocity = new Two.Vector(Math.floor(Math.random() * 10), Math.floor(Math.random() * 10));
+
+        _bubbles.push(bubble);
+
+    }
+
+    window.addEventListener('click', function(e){
+        var point = new Two.Vector(e.clientX, e.clientY);
+        addBubble(point);
+    })
+</script>
+</body>
+</html>

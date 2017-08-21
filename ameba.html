@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+        <body style="background: #efefef;">
+        <script src="./two.js"></script>
+        <script src="./third-party/physics.js"></script>
+        <script>
+            var two = new Two({
+                fullscreen: true
+             }).appendTo(document.body);
+
+             var mass = 10;
+             var radius = two.height / 5;
+             var strength = 0.0625;
+             var drag = 0.0;
+
+             var background = two.makeGroup();
+             var foreground = two.makeGroup();
+
+             var physics = new Physics();
+             var points = [];
+
+             for(var i = 0; i < Two.Resolution; i++){
+                
+                var pct = i / Two.Resolution;
+                var theta = pct * Math.PI * 2;
+
+                var ax = radius * Math.cos(theta);
+                var ay = radius * Math.sin(theta);
+
+                var variance = Math.random() * .5 + .5;
+                var bx = variance * ax;
+                var by = variance * ay;
+
+                var origin = physics.makeParticle(mass , ax, ay);
+                var particle = physics.makeParticle(Math.random() * mass * 0.66 + mass * .33, bx, by);
+                var spring = physics.makeSpring(particle, origin, strength, drag, 0);
+
+                origin.makeFixed();
+
+                particle.shape = two.makeCircle(particle.position.x, particle.position.y, Math.random() * 80 + 10),
+                particle.shape.noStroke().fill = randomColor();
+                particle.position = particle.shape.translation;
+
+                foreground.add(particle.shape);
+                points.push(particle.position);
+             }
+
+             var outer = new Two.Path(points, true, true);
+             outer.noStroke().fill = randomColor();
+             outer.scale = 1.75;
+
+             background.add(outer);
+             resize();
+
+             two.bind('resize', resize)
+                .bind('update', function(){
+                 physics.update();
+                }).play();
+             
+// extra 
+             window.addEventListener('click', function(e){
+
+                mass += 5;
+                var ctrx =  e.clientX - two.width / 2;
+                var ctrY =  e.clientY - two.height / 2;
+
+                var variance = Math.random() * .5 + .5;
+                var bx2 = variance * ctrx;
+                var by2 = variance * ctrY;
+
+                var origin2 = physics.makeParticle(mass , ctrx, ctrY);
+                var particle2 = physics.makeParticle(Math.random() * mass * 0.66 + mass * .33, bx2, by2);
+                var spring2 = physics.makeSpring(particle2, origin2, strength, drag, 0);
+
+                origin2.makeFixed();
+
+                particle2.shape = two.makeCircle(particle2.position.x, particle2.position.y, Math.random() * 80 + 10),
+                particle2.shape.noStroke().fill = randomColor();
+                particle2.position = particle2.shape.translation;
+
+                foreground.add(particle2.shape);
+                points.push(particle2.position);
+
+             })
+
+
+// background and functions 
+             window.addEventListener('load', function(){
+                 document.body.style.background = 'url(' + generateGrid() +') repeat 0 0';
+             });
+
+             function resize(){
+                background.translation.set(two.width / 2, two.height / 2);
+                foreground.translation.copy(background.translation);
+             }
+
+             function randomColor(){
+                return 'rgba('
+                    + Math.floor(Math.random() * 255) + ','
+                    + Math.floor(Math.random() * 255) + ','
+                    + Math.floor(Math.random() * 255) + ','
+                    + '.3)';
+            }
+
+             function generateGrid(){
+                 var two = new Two({
+                     type: Two.Types.canvas,
+                     width: 16,
+                     height: 16,
+                     ratio: 2
+                 });
+
+                 var width = two.width / 2;
+                 var height = two.height / 2;
+
+                 var background = two.makeRectangle( two.width / 2, two.height / 2, two.width, two.height);
+                 background.noStroke().fill = '#fefefe';
+
+                 var circle = two.makeCircle( two.width / 2, two.height / 2, .5);
+                 circle.noStroke().fill = '#999';
+
+                 two.update();
+
+                 return two.renderer.domElement.toDataURL('image/png');
+             }
+        </script>
+</body>
+</html>

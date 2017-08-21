@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body style="background: #efefef;">
+        <script src="./two.js"></script>
+        <script>
+            var two = new Two({
+                fullscreen: true,
+                autoStart: true
+             }).appendTo(document.body);
+
+             var colors = [
+                'rgb(255, 64, 64)',
+                'rgb(255, 128, 0)',
+                'rgb(0, 200, 255)',
+                'rgb(0, 191, 168)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 244, 95)'
+             ];
+            colors.index = 0;
+            var velocity = 0.05;
+
+             var linearGradient = two.makeLinearGradient(
+                 two.width / 2, - two.height / 2,
+                 two.width / 2, two.height / 2,
+                 new Two.Stop(0, colors[0]),
+                 new Two.Stop(1, colors[1]),
+                 new Two.Stop(1, colors[1])
+
+             )
+
+            var rectangle = two.makeRectangle(two.width / 2, two.height / 2, two.width, two.height);
+            rectangle.noStroke().fill = linearGradient;
+
+
+             two.bind('update', function(frameCounter){
+                var o = linearGradient.stops[1].offset;
+
+                if (o < 0.001) {
+
+                linearGradient.stops[1].offset = 1;
+                colors.index = (colors.index + 1) % colors.length;
+
+                for (var i = 0; i < linearGradient.stops.length; i++) {
+                    linearGradient.stops[i].color = colors[(colors.index + i) % colors.length]
+                }
+                } else {
+                    linearGradient.stops[1].offset -= o * velocity;
+                }
+             }).play();
+
+             window.addEventListener('mousemove', function(e){
+                velocity = Math.min((two.height / e.clientY) / 20, 0.3);
+             })
+        </script>
+    
+</body>
+</html>

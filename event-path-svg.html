@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./two.js"></script>
+    <script>
+        var two = new Two({
+            fullscreen: true,
+            autostart: true
+        }).appendTo(document.body);
+
+        var rect = two.makeRectangle(two.width / 2, two.height / 2, 200, 200);
+        rect.fill = randomColor();
+        rect.noStroke();
+
+        two.bind('update', function(frameCount, timeDelta){
+            rect.rotation = frameCount / 60;
+        })
+
+        two.update();
+
+        rect._renderer.elem.addEventListener('click', function(){
+            rect.fill = randomColor();
+        });
+
+        function randomColor(){
+            return 'rgb('
+                + Math.floor(Math.random() * 255) + ','
+                + Math.floor(Math.random() * 255) + ','
+                + Math.floor(Math.random() * 255) + ')';
+        }
+    </script>
+</body>
+</html>

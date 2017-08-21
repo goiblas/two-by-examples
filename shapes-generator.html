@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+        <script src="./two.js"></script>
+        <script>
+            var two = new Two({
+                fullscreen: true,
+                autostart: true
+            }).appendTo(document.body);
+
+            var radius = 40;
+            var shapes = {
+                triangle: {
+                    enabled: true,
+                    make: function(){
+                        var points = generate(3);
+                        var shape = new Two.Path(points, true)
+                        return shape;
+                    }
+                },
+                square: {
+                    enabled: true,
+                    make: function(){
+                        var points = generate(4);
+                        var shape = new Two.Path(points, true);
+                        return shape;
+                    }
+                },
+                star: {
+                    enabled: true,
+                    make: function(){
+                        var points = generate(5);
+                        var shape = new Two.Path(points, true);
+                        return shape;
+                    }
+                },
+                pentagono: {
+                    enabled: true,
+                    make: function(){
+                        var points = generate(6);
+                        var shape = new Two.Path(points, true);
+                        return shape;
+                    }
+                },
+                poly: {
+                    enabled: true,
+                    make: function(){
+                        var points = generate(8);
+                        var shape = new Two.Path(points, true);
+                        return shape;
+                    }
+                },
+                circle: {
+                    enabled: true,
+                    make: function(){
+                        var points = generate(5);
+                        var shape = new Two.Path(points, true, true)
+                        return shape;
+                    }
+                }
+            }
+
+
+            var arrayShapes = Object.keys(shapes);
+            var activedShapes = [];
+            var positions = []
+            
+    two.bind('update', function(){
+
+        for(var i = 0; i < activedShapes.length; i++){
+            var sh = activedShapes[i];
+            
+            sh.translation.addSelf(sh.velocity);
+            
+            var rect = sh.getBoundingClientRect();
+            var pointRight = Math.floor(sh.translation.x + rect.width / 2);
+            var pointBottom =  Math.floor(sh.translation.y + rect.height / 2);
+            var pointLeft =  Math.floor(sh.translation.x - rect.width / 2);
+            var pointTop =  Math.floor(sh.translation.y - rect.height / 2);
+
+            if( pointRight > two.width || pointLeft < 0 ){
+                sh.velocity.x *= -1;
+            }
+            
+            if( pointBottom > two.height || pointTop < 0){
+                sh.velocity.y *= -1;
+            }
+        }
+    }).play();
+
+    window.addEventListener('click', function(e){
+        addParticle(e);
+    });
+
+// funtions
+function addParticle(e){
+    var name = arrayShapes[ Math.floor( Math.random() * arrayShapes.length)];
+    var newShape = shapes[name].make();
+
+    newShape.noStroke().fill = randomColor();
+    newShape.translation.set( e.clientX, e.clientY);
+
+    newShape.velocity = new Two.Vector(Math.random() * 10, Math.random() * 10);
+    activedShapes.push(newShape);
+    two.scene.add(newShape);
+
+}
+
+function generate(amount) {
+    var r = Math.random() * radius + radius / 2;
+    return _.map(_.range(amount), function(i) {
+
+      var pct = i / amount;
+      var angle = pct * Math.PI * 2;
+      var x = r * Math.cos(angle);
+      var y = r * Math.sin(angle);
+      var anchor = new Two.Anchor(x, y);
+
+      // anchor.origin = new Two.Vector().copy(anchor);
+
+
+      return anchor;
+    });
+  }
+
+  function randomColor(){
+            return 'rgb('
+                + Math.floor(Math.random() * 255) + ','
+                + Math.floor(Math.random() * 255) + ','
+                + Math.floor(Math.random() * 255) + ')';
+        }
+        </script>
+</body>
+</html>
