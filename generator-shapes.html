@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body style="background: #fcb215;">
+ <script src="./two.js"></script>
+    <script>
+        var two = new Two({
+            fullscreen: true,
+            autostart: true
+        }).appendTo(document.body);
+
+        Two.Resolution = 10;
+        var blob = two.makeCircle(two.width / 2, two.height /2, two.height/ 5);
+        blob.noStroke().fill = 'white';
+
+        generator();
+
+        two.bind('update', function(){
+            _.each(blob.vertices, function(v, index){
+                var d = v.destination;
+                if(v.distanceTo(d) > 10 ){
+                    v.x += (d.x - v.x) * 0.025;
+                    v.y += (d.y - v.y) * 0.125;
+                } else {
+                    generator();                    
+                }
+            });
+        })
+
+        function generator(){
+
+
+            _.each(blob.vertices, function(v, index){
+
+                var pct = (index + 1) / blob.vertices.length;
+                var radius = Math.random() * two.height/ 4 + two.height / 6;
+                var theta = pct * Math.PI * 2;
+
+                var x = radius * Math.sin(theta);
+                var y = radius * Math.cos(theta);                
+
+                v.destination = new Two.Vector(x, y);
+                v.step = Math.random() + 1;
+            })
+        }
+    </script>
+</body>
+</html>

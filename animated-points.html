@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body style="background: #313232;">
+    <script src="./two.js"></script>
+    <script>
+        var two = new Two({
+            fullscreen: true,
+            autostart: true
+        }).appendTo(document.body);
+
+        var size = 30;
+        var boxes = [];
+        var actived = 0;
+
+        generateBalls();
+    
+        two.bind('update', function( framecount){
+
+        
+        if( actived < Math.ceil(two.width/ size)){
+            var rows = Math.ceil(two.height/size);
+            
+            for( var i = 0; i< rows; i++ ){
+                var sel = i * Math.ceil(two.width /size) + actived;  
+                if(boxes[sel]){
+                    boxes[sel].opacity = boxes[sel].opacity === 1 ? 0.2 : 1;
+                }
+            }
+
+        actived++;
+        } else {
+            actived = 0;
+        }
+
+        _.each(boxes, function(item){
+            // opacity checkout
+
+            if(item.opacity > item.group.opacity && item.size === 1){
+                item.group.opacity += .1;
+            } else if ( item.opacity < item.group.opacity && item.size === 1){
+                item.group.opacity -= .1;
+            }
+
+            // size checkout
+            _.each(item.group.children, function(path){
+                if( path instanceof Two.Ellipse){
+                    if ( item.size === path.scale && item.animated){
+                        item.animated = false;
+                    } else if ( item.size > path.scale){
+                       item.group.opacity = 1;
+                        path.scale += .5;
+                    } else if ( item.size < path.scale) {
+                        path.scale -= .5;
+                    }
+                }
+           })
+        })
+
+
+        })
+
+        
+        window.addEventListener('resize', function() {
+            boxes = [];
+            actived = 0;
+            two.clear();
+            generateBalls();
+        });
+         
+        function generateBalls(){
+
+            for(var i = 0; i < Math.ceil(two.height / size); i++){
+
+                for( var j = 0; j < Math.ceil(two.width / size); j++){
+
+                    var box = two.makeRectangle(j * size + size/2, i *size + size/2, size, size);
+                    box.noStroke().noFill();
+
+                    var ball = two.makeCircle(j * size + size/2, i * size + size/2, 2);
+                    ball.noStroke().fill = '#fff';
+
+                    var group = two.makeGroup(box, ball);
+                    group.opacity = .2;
+
+                    var shape = {
+                        group : group,
+                        opacity: .2,
+                        size: 1,
+                        animated: false
+                    }
+                    boxes.push(shape);
+                }
+
+                
+            }
+
+            two.update();
+
+           
+            
+            _.each(boxes, function(item){
+
+                item.group._renderer.elem.style.cursor = 'pointer';
+                item.group._renderer.elem.addEventListener('click', function(){
+
+                    if(item.size > 1) {
+                        item.size = 1;
+                    } else {
+                        item.size = 6;
+                    }
+
+                    item.animated = true;
+                });
+               
+            });
+            
+        }
+        
+    </script>
+</body>
+</html>

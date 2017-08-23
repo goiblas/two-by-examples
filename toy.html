@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+  <script src="./two.js"></script>
+  <script>
+      var two = new Two({
+          fullscreem : true,
+          autostart: true
+      }).appendTo(document.body)
+
+      Two.Resolution = 4;
+      var square = two.makeCircle( two.width / 2, two.height / 2, 40);
+      square.noStroke().fill = '#ddd';
+
+      var eyes = two.makeCircle( two.width/ 2 -20, two.height / 2 -20, 10);
+      eyes.noStroke().fill = '#111';
+
+      var eyes_position = new Two.Vector( Math.random() * 40,  Math.random() * 40);
+      eyes.translation.addSelf(eyes_position);
+
+      _.each(square.vertices, function(v){   
+        v.x = v.x + (Math.random() * 4);
+        v.y = v.y + (Math.random() * 4);
+      })
+
+  </script>  
+</body>
+</html>
