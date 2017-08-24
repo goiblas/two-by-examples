@@ -1,0 +1,31 @@
+{
+  "name": "testingtwojs",
+  "version": "1.0.0",
+  "description": "Examples with the library TWO",
+  "main": "package.json",
+  "repository": {
+    "type": "git",
+    "url": "git://git@github.com/goiblas/two-by-examples.git"
+  },
+  "author": "Jesús Olazagoitia <jesus.designer@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-webpack-plugin": "^0.1.16",
+    "copy-webpack-plugin": "^4.0.1",
+    "express": "^4.15.4",
+    "html-webpack-plugin": "^2.30.1",
+    "lodash": "^4.17.4",
+    "webpack": "^3.5.5",
+    "webpack-dev-middleware": "^1.12.0",
+    "webpack-dev-server": "^2.7.1"
+  },
+  "scripts": {
+    "build": "webpack -p",
+    "watch": "webpack --progress --watch",
+    "start": "webpack-dev-server --open",
+    "serve": "node server.js"
+  },
+  "dependencies": {
+    "two.js": "^0.6.0"
+  }
+}

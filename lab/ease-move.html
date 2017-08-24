@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script src="./third-party/tween.js"></script>
+    <script src="./two.js"></script>
+    <script>
+
+       var two = new Two({
+            fullscreen: true,
+            autostart: true
+        }).appendTo(document.body);
+
+        
+        var rect = two.makeRectangle( 0, 0,  20, 40);
+        rect.noStroke().fill = 'red';
+        rect.translation.set( two.width / 2, two.height / 9);
+
+        var animationDown = new TWEEN.Tween(rect.translation)
+            .to({
+                y: two.height / 1.12
+            }, 1000)
+            .delay(500)
+            .easing(TWEEN.Easing.Bounce.Out)
+            .onUpdate( function( f){
+                rect.rotation = Math.PI * 4 * f;
+            })
+            .onComplete(function(){
+                animationUp.start();
+            })
+            .start();
+
+        var animationUp = new TWEEN.Tween(rect.translation)
+            .to({
+                y: two.height / 9
+            }, 500)
+            .delay(1000)
+            .easing(TWEEN.Easing.Elastic.Out)
+            .onComplete( function(){
+                animationDown.start();
+            })
+
+        two.bind('update', function(){
+            TWEEN.update();
+        }).play();
+
+    </script>
+</body>
+</html>
