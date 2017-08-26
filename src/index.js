@@ -1,6 +1,5 @@
 import background from './shapes';
 
-
 function init(){
     var two = new Two({
         fullscreen: true,

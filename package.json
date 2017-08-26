@@ -21,7 +21,8 @@
   "scripts": {
     "build": "webpack -p",
     "watch": "webpack --progress --watch",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "serve": "node server.js"
   },
   "dependencies": {
     "two.js": "^0.6.0"
